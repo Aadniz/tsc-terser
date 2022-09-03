@@ -79,21 +79,6 @@ do
 done
 
 
-# Check what application to run first
-first=""
-for i in "$@"
-do
-    if [ "$i" = "tsc" ] ; then
-        first="tsc"
-        break
-    fi
-    if [ "$i" = "terser" ] ; then
-        first="terser"
-        break
-    fi
-done
-
-
 
 # Execute
 for i in "${apps[@]}"
