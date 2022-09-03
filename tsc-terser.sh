@@ -24,8 +24,26 @@ helpmenu () {
 
 apps=()
 
+# Check what apps are involved
+for i in "$@"
+do
+    if [ "$i" = "terser" ] ; then
+        apps+=("terser")
+    fi
+    if [ "$i" = "tsc" ] ; then
+        apps+=("tsc")
+    fi
+done
 
-# First append tsc commands
+
+# Check if no application was provided
+if (( ${#apps[@]} == 0 )); then
+    helpmenu
+    exit
+fi
+
+
+# Append tsc commands
 tsc_args=()
 
 start=0
@@ -42,13 +60,8 @@ do
     fi
 done
 
-# In case nothing was found at all, assume you don't want to use tsc at all
-if (( $start == 1 )) ; then
-    apps+=("tsc")
-fi
 
-
-# Then append terser commands
+# Append terser commands
 terser_args=()
 
 start=0
@@ -65,18 +78,6 @@ do
     fi
 done
 
-# In case nothing was found at all, assume you don't want to use tsc at all
-if (( $start == 1 )) ; then
-    apps+=("terser")
-fi
-
-
-# Check if no application was provided
-if (( ${#apps[@]} == 0 )); then
-    helpmenu
-    exit
-fi
-
 
 # Check what application to run first
 first=""
@@ -92,4 +93,14 @@ do
     fi
 done
 
-echo ${first}
+
+
+# Execute
+for i in "${apps[@]}"
+do
+	if [ "$i" = "tsc" ] ; then
+        tsc ${tsc_args[@]} || { echo 'tsc failed' ; exit 1; }
+    elif [ "$i" = "terser" ] ; then
+        terser ${terser_args[@]} || { echo 'terser failed' ; exit 1; }
+    fi
+done
